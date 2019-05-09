@@ -46,8 +46,7 @@ public class JdbcUtil {
         }
         return conn;
     }
-
-    public static void main(String[] args) {
-        new JdbcUtil().getConnect();
+    public static DataSource getDataSource() {
+        return dataSource;
     }
 }
