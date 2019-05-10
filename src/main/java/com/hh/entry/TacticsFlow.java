@@ -19,7 +19,7 @@ public class TacticsFlow {
     /**
      * 探针id
      */
-    private Integer probeId;
+    private Integer policyId;
 
     /**
      * 时间
@@ -87,4 +87,43 @@ public class TacticsFlow {
      */
     private long dnMaxBps;
 
+    public Integer getPolicyId() {
+        return policyId;
+    }
+
+    public void setPolicyId(Integer policyId) {
+        this.policyId = policyId;
+    }
+
+    public long getTime() {
+        return time;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
+    }
+
+    public int getTimeGranu() {
+        return timeGranu;
+    }
+
+    public void setTimeGranu(int timeGranu) {
+        this.timeGranu = timeGranu;
+    }
+
+    public long getUpBps() {
+        return upBps;
+    }
+
+    public void setUpBps(long upBps) {
+        this.upBps = upBps;
+    }
+
+    public long getDnBps() {
+        return dnBps;
+    }
+
+    public void setDnBps(long dnBps) {
+        this.dnBps = dnBps;
+    }
 }

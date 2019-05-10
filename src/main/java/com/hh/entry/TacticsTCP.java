@@ -26,6 +26,10 @@ public class TacticsTCP {
         this.commver = commver;
     }
 
+    public String feelOutMsg(){
+        return "hello reader comm" + this.commver;
+    }
+
     public String getIp() {
         return ip;
     }

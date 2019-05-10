@@ -24,16 +24,20 @@ public class App
     private static ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
 
     public static void main( String[] args )
-    {/*
+    {
+        TacticsDB tacticsDB = new TacticsDB(JdbcUtil.getDataSource());
         List<TacticsTCP> tacticsTCPS = new ArrayList<>();
-        tacticsTCPS.add(new TacticsTCP("127.0.0.1", 8778, "123"));
-        tacticsTCPS.add(new TacticsTCP("127.0.0.1", 8779, "123"));
+
+       tacticsTCPS = tacticsDB.getLinkMsg();
+        tacticsTCPS.add(new TacticsTCP("10.10.15.224", 6011, "4.31"));
+//        tacticsTCPS.add(new TacticsTCP("127.0.0.1", 8778, "123"));
+//        tacticsTCPS.add(new TacticsTCP("127.0.0.1", 8779, "123"));
+
         for (TacticsTCP tacticsTCP : tacticsTCPS) {
             cachedThreadPool.execute(new TcpRunnable(tacticsTCP));
         }
-        new SelfTask().start();*/
-        TacticsDB tacticsDB = new TacticsDB(JdbcUtil.getDataSource());
-log.info(tacticsDB.getLinkMsg().toString());
-        log.info("是否存在："+tacticsDB.isExistTable("td_service_1d11_m_201905"));
+        new SelfTask().start();
+/*log.info(tacticsDB.getLinkMsg().toString());
+        log.info("是否存在："+tacticsDB.isExistTable("td_service_1d11_m_201905"));*/
     }
 }

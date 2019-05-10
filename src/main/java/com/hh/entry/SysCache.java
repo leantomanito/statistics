@@ -22,5 +22,6 @@ public class SysCache {
 
     //Tcp链接对象
    public static Map<String, TacticsChannel> channelMap = new HashMap<>();
-
+    //Tcp链接对象
+    public static Map<String, TacticsChannel> sucChannelMap = new HashMap<>();
 }

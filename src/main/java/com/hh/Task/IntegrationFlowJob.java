@@ -22,7 +22,6 @@ import org.quartz.JobExecutionException;
 public class IntegrationFlowJob implements Job {
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        System.out.println(System.currentTimeMillis());
-        System.out.println("这里是要执行的任务");
+        System.out.println("5分钟执行一次");
     }
 }

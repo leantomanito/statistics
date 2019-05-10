@@ -14,6 +14,7 @@ import com.hh.Task.SelfTask;
 import com.hh.entry.SysCache;
 import com.hh.entry.TacticsChannel;
 import com.hh.entry.TacticsTCP;
+import com.hh.tcp.filter.NettyClientFilter;
 import com.hh.tcp.handler.EchoHandler;
 import com.hh.thread.TcpRunnable;
 import io.netty.bootstrap.Bootstrap;
@@ -23,6 +24,8 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.DelimiterBasedFrameDecoder;
+import io.netty.handler.codec.Delimiters;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.handler.logging.LoggingHandler;
@@ -44,7 +47,6 @@ import java.util.concurrent.TimeUnit;
 public class TcpClient {
     private static final Logger log = LoggerFactory.getLogger(TcpClient.class);
     private TacticsTCP tacticsTCP;
-
     public TcpClient(TacticsTCP tacticsTCP) {
         this.tacticsTCP = tacticsTCP;
     }
@@ -54,20 +56,10 @@ public class TcpClient {
             Bootstrap bootstrap = new Bootstrap();
             bootstrap.group(group);
             bootstrap.channel(NioSocketChannel.class);
-            bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
-            bootstrap.handler(new ChannelInitializer() {
-                @Override
-                protected void initChannel(Channel ch) throws Exception {
-                    ch.pipeline().addLast("logging", new LoggingHandler("DEBUG"));
-                    ch.pipeline().addLast("StringDecoder", new StringDecoder());
-                    ch.pipeline().addLast("StringEncoder", new StringEncoder());
-                    ch.pipeline().addLast("ping", new IdleStateHandler(60, 20, 60 * 10, TimeUnit.SECONDS));
-                    ch.pipeline().addLast("ClientHandler", new EchoHandler());
-                }
-            });
+//            bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
+            bootstrap.option(ChannelOption.TCP_NODELAY, true);
+            bootstrap.handler(new NettyClientFilter(tacticsTCP));
             ChannelFuture future = bootstrap.connect(tacticsTCP.getIp(), tacticsTCP.getPort());
-            SysCache.channelMap.put(future.channel().id().asLongText(),
-                    new TacticsChannel(future.channel(), tacticsTCP));
             future.channel().closeFuture().sync();
         } catch (Exception e) {
             e.printStackTrace();
@@ -79,4 +71,5 @@ public class TcpClient {
             }
         }
     }
+
 }

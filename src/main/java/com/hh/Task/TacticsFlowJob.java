@@ -13,7 +13,9 @@ package com.hh.Task;
 import com.hh.entry.SysCache;
 import com.hh.entry.TacticsChannel;
 import com.hh.entry.TacticsTCP;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
+import io.netty.util.CharsetUtil;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -32,19 +34,18 @@ public class TacticsFlowJob implements Job {
     private static final Logger logger = LoggerFactory.getLogger(TacticsTCP.class);
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        if(SysCache.channelMap.isEmpty()){
+        if(SysCache.sucChannelMap.isEmpty()){
             logger.info("暂无链接数据");
             return;
         }
-        for(String key : SysCache.channelMap.keySet()){
-            TacticsChannel tacticsChannel = SysCache.channelMap.get(key);
+        for(String key : SysCache.sucChannelMap.keySet()){
+            TacticsChannel tacticsChannel = SysCache.sucChannelMap.get(key);
             Channel channel = tacticsChannel.getChannel();
-            if(!channel.isActive()){
-                logger.info(key+"没有链接成功");
-                continue;
-            }
-            TacticsTCP tacticsTCP = tacticsChannel.getTacticsTCP();
-            channel.writeAndFlush("我支持的协议号：" + tacticsTCP.getCommver());
+            StringBuilder sb=new StringBuilder();
+            sb.append("Begin getReaderInfo\r\n");
+            sb.append("mTupleCtrlStatis,18\r\n");
+            sb.append("End getReaderInfo items=1\r\n");
+            channel.writeAndFlush(Unpooled.copiedBuffer(sb.toString(), CharsetUtil.UTF_8));
         }
     }
 }
