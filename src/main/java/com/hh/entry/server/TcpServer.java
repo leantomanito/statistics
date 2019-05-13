@@ -17,6 +17,8 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.DelimiterBasedFrameDecoder;
+import io.netty.handler.codec.Delimiters;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.handler.logging.LoggingHandler;
@@ -39,6 +41,7 @@ public class TcpServer {
             bootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
                 protected void initChannel(SocketChannel ch) throws Exception {//绑定通道参数
                     ch.pipeline().addLast("logging", new LoggingHandler("DEBUG"));//设置log监听器，并且日志级别为debug，方便观察运行流程
+                    ch.pipeline().addLast("framer", new DelimiterBasedFrameDecoder(8192, Delimiters.lineDelimiter()));
                     ch.pipeline().addLast("StringDecoder",new StringDecoder());
                     ch.pipeline().addLast("StringEncoder",new StringEncoder());
                     ch.pipeline().addLast("handler",new HelloHandler());//业务处理类，最终的消息会在这个handler中进行业务处理
@@ -57,11 +60,6 @@ public class TcpServer {
             boss.shutdownGracefully();//出现异常后，关闭线程组
             System.out.println("tcp服务器已经关闭");
         }
-
-    }
-
-    public static void main(String[] args) {
-        new TcpServer(8778 ).init();
 
     }
     public TcpServer(int port) {

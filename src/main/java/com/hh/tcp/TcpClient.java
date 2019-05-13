@@ -46,10 +46,13 @@ import java.util.concurrent.TimeUnit;
  */
 public class TcpClient {
     private static final Logger log = LoggerFactory.getLogger(TcpClient.class);
+
     private TacticsTCP tacticsTCP;
+
     public TcpClient(TacticsTCP tacticsTCP) {
         this.tacticsTCP = tacticsTCP;
     }
+    
     public void init(){
         NioEventLoopGroup group = new NioEventLoopGroup();
         try {
