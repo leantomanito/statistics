@@ -59,7 +59,8 @@ public class TcpClient {
             Bootstrap bootstrap = new Bootstrap();
             bootstrap.group(group);
             bootstrap.channel(NioSocketChannel.class);
-//            bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
+            //连接超时设置
+            bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000);
             bootstrap.option(ChannelOption.TCP_NODELAY, true);
             bootstrap.handler(new NettyClientFilter(tacticsTCP));
             ChannelFuture future = bootstrap.connect(tacticsTCP.getIp(), tacticsTCP.getPort());

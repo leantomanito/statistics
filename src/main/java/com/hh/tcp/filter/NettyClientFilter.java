@@ -34,7 +34,7 @@ public class NettyClientFilter extends ChannelInitializer {
 
     @Override
     protected void initChannel(Channel ch) throws Exception {
-        ch.pipeline().addLast("logging", new LoggingHandler("DEBUG"));
+//        ch.pipeline().addLast("logging", new LoggingHandler("DEBUG"));
         ch.pipeline().addLast("framer", new DelimiterBasedFrameDecoder(8192, Delimiters.lineDelimiter()));
         ch.pipeline().addLast("StringDecoder", new StringDecoder());
         ch.pipeline().addLast("StringEncoder", new StringEncoder());

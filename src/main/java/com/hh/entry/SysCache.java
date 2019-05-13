@@ -11,6 +11,7 @@
 package com.hh.entry;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,5 +24,5 @@ public class SysCache {
     //Tcp链接对象
    public static Map<String, TacticsChannel> channelMap = new HashMap<>();
     //Tcp链接对象
-    public static Map<String, TacticsChannel> sucChannelMap = new HashMap<>();
+    public static Map<Long, List<TacticsFlow>> flowDataMap = new HashMap<>();
 }

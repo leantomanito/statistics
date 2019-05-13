@@ -15,8 +15,9 @@ import com.hh.entry.TacticsChannel;
 import com.hh.entry.TacticsFlow;
 import com.hh.entry.TacticsTCP;
 import com.hh.tcp.TcpClient;
-import io.netty.buffer.ByteBuf;
+import com.hh.util.DateUtil;
 import io.netty.buffer.Unpooled;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -25,7 +26,8 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author zyj
@@ -88,6 +90,7 @@ public class EchoHandler extends SimpleChannelInboundHandler<Object> {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         cause.printStackTrace();
+        ctx.close();
     }
 
     //该类是核心方法
@@ -95,13 +98,35 @@ public class EchoHandler extends SimpleChannelInboundHandler<Object> {
     protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
 //        ByteBuf msgBuf = (ByteBuf) msg;
 //        ByteBuf buf = msgBuf.readBytes(msgBuf.readableBytes());
+
         log.info("server response :\n" + msg.toString());
+
+
         if (msg.toString().equals(tacticsTCP.feelOutMsg())) {
             TacticsChannel tacticsChannel = new TacticsChannel(ctx.channel(), this.tacticsTCP);
-            SysCache.sucChannelMap.put(ctx.channel().id().asLongText(), tacticsChannel);
+//            SysCache.sucChannelMap.put(ctx.channel().id().asLongText(), tacticsChannel);
+            Channel channel = ctx.channel();
+            StringBuilder sb = new StringBuilder();
+            sb.append("Begin getReaderInfo\r\n");
+            sb.append("mTupleCtrlStatis,18\r\n");
+            sb.append("End getReaderInfo items=1\r\n");
+            channel.writeAndFlush(Unpooled.copiedBuffer(sb.toString(), CharsetUtil.UTF_8));
         }
-        if (msg.toString().indexOf(",") != -1) {
-            dataHandle(msg.toString());
+        synchronized(EchoHandler.class){
+            if (msg.toString().indexOf(",") != -1) {
+                long minute = DateUtil.getReorganizeMinute();
+                if(!SysCache.flowDataMap.containsKey(minute)){
+                    SysCache.flowDataMap.put(minute, new ArrayList<TacticsFlow>());
+                }
+                TacticsFlow tacticsFlow = dataHandle(msg.toString());
+                tacticsFlow.setTime(minute);
+                List<TacticsFlow> tacticsFlows = SysCache.flowDataMap.get(minute);
+                tacticsFlows.add(tacticsFlow);
+            }
+        }
+        if(msg.toString().indexOf("End") != -1){
+            ctx.close();
+            log.info("tcp链接中断");
         }
     }
 
@@ -112,7 +137,8 @@ public class EchoHandler extends SimpleChannelInboundHandler<Object> {
         String[] date = msg.split(",");
         TacticsFlow tacticsFlow = new TacticsFlow();
         tacticsFlow.setPolicyId(Integer.valueOf(date[0]));
-
+        tacticsFlow.setUpBps(arrange32Data(Integer.valueOf(date[1]),Integer.valueOf(date[2])));
+        tacticsFlow.setDnBps(arrange32Data(Integer.valueOf(date[3]),Integer.valueOf(date[4])));
         return tacticsFlow;
     }
 

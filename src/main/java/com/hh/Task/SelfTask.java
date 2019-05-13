@@ -51,11 +51,11 @@ public class SelfTask {
                     .withSchedule(CronScheduleBuilder.cronSchedule("0 0/1 * * * ?"))
                     .startNow().build();
             Trigger integrationFlowTrigger = TriggerBuilder.newTrigger().withIdentity(TRIGGER_INTEGRATION_FLOW, TRIGGER_INTEGRATION_FLOW)
-                    .withSchedule(CronScheduleBuilder.cronSchedule("0/5 * * * * ?"))
+                    .withSchedule(CronScheduleBuilder.cronSchedule("0 0/5 * * * ?"))
                     .startNow().build();
 //		 把作业和触发器注册到任务调度中
             scheduler.scheduleJob(tacticsFlowJob, tacticsFlowTrigger);
-//            scheduler.scheduleJob(integrationFlowJob, integrationFlowTrigger);
+            scheduler.scheduleJob(integrationFlowJob, integrationFlowTrigger);
 //		 启动调度
             scheduler.start();
 

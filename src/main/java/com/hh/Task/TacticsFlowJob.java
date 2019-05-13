@@ -10,9 +10,12 @@
  */
 package com.hh.Task;
 
+import com.hh.db.TacticsDB;
 import com.hh.entry.SysCache;
 import com.hh.entry.TacticsChannel;
 import com.hh.entry.TacticsTCP;
+import com.hh.jdbc.JdbcUtil;
+import com.hh.thread.TcpRunnable;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.util.CharsetUtil;
@@ -22,8 +25,12 @@ import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author zyj
@@ -31,21 +38,31 @@ import java.util.Set;
  * @since 1.0.0
  */
 public class TacticsFlowJob implements Job {
-    private static final Logger logger = LoggerFactory.getLogger(TacticsTCP.class);
+    private static final Logger log = LoggerFactory.getLogger(TacticsTCP.class);
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        if(SysCache.sucChannelMap.isEmpty()){
-            logger.info("暂无链接数据");
-            return;
+        ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
+        TacticsDB tacticsDB = new TacticsDB();
+        List<TacticsTCP> tacticsTCPS = new ArrayList<>();
+//        tacticsTCPS = tacticsDB.getLinkMsg();
+        for (int i = 0; i < 10; i++) {
+            tacticsTCPS.add(new TacticsTCP("10.10.15.224", 6011, "4.31"));
         }
-        for(String key : SysCache.sucChannelMap.keySet()){
-            TacticsChannel tacticsChannel = SysCache.sucChannelMap.get(key);
-            Channel channel = tacticsChannel.getChannel();
-            StringBuilder sb=new StringBuilder();
-            sb.append("Begin getReaderInfo\r\n");
-            sb.append("mTupleCtrlStatis,18\r\n");
-            sb.append("End getReaderInfo items=1\r\n");
-            channel.writeAndFlush(Unpooled.copiedBuffer(sb.toString(), CharsetUtil.UTF_8));
+
+        for (TacticsTCP tacticsTCP : tacticsTCPS) {
+            cachedThreadPool.execute(new TcpRunnable(tacticsTCP));
+        }
+        //结束线程池内的所有线程任务
+        cachedThreadPool.shutdown();
+        while (true) {
+            if (cachedThreadPool.isTerminated()) {
+                log.info("线程池所有任务都已结束");
+                break;
+            }
+        }
+
+        for (Long aLong : SysCache.flowDataMap.keySet()) {
+            SysCache.flowDataMap.get(aLong);
         }
     }
 }

@@ -1,6 +1,10 @@
 package com.hh;
 
+import com.hh.Task.SelfTask;
+import com.hh.db.TacticsDB;
+import com.hh.entry.TacticsFlow;
 import com.hh.entry.TacticsTCP;
+import com.hh.jdbc.JdbcUtil;
 import com.hh.thread.TcpRunnable;
 import com.hh.thread.TcpServerRunnable;
 import org.slf4j.Logger;
@@ -19,26 +23,18 @@ public class App {
     private static ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
 
     public static void main(String[] args) {
-//        TacticsDB tacticsDB = new TacticsDB(JdbcUtil.getDataSource());
-        List<TacticsTCP> tacticsTCPS = new ArrayList<>();
-
-//        tacticsTCPS = tacticsDB.getLinkMsg();
-
-//        tacticsTCPS.add(new TacticsTCP("127.0.0.1", 8778, "123"));
-//        tacticsTCPS.add(new TacticsTCP("127.0.0.1", 8779, "123"));
-        int startPort = 8700;
-        List<Integer> ports = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            int port = startPort + i;
-            tacticsTCPS.add(new TacticsTCP("127.0.0.1", port, "4.31"));
-            ports.add(port);
-            cachedThreadPool.execute(new TcpServerRunnable(port));
-        }
-        for (TacticsTCP tacticsTCP : tacticsTCPS) {
-            cachedThreadPool.execute(new TcpRunnable(tacticsTCP));
-        }
-        /*new SelfTask().start();*/
-/*log.info(tacticsDB.getLinkMsg().toString());
-        log.info("是否存在："+tacticsDB.isExistTable("td_service_1d11_m_201905"));*/
+//        TacticsDB tacticsDB = new TacticsDB();
+////        tacticsDB.createTable("xxxxxx");
+//        List<TacticsFlow> tacticsFlows = new ArrayList<>();
+//        TacticsFlow tacticsFlow = new TacticsFlow();
+//        tacticsFlow.setDnBps(123);
+//        tacticsFlow.setUpBps(123);
+//        tacticsFlow.setUpMaxBps(12314);
+//        tacticsFlow.setTime(231241231);
+//        tacticsFlow.setDnMaxBps(124412);
+//        tacticsFlow.setPolicyId(123);
+//        tacticsFlows.add(tacticsFlow);
+//        tacticsDB.addSatics("xxxxxx", tacticsFlows);
+        new SelfTask().start();
     }
 }

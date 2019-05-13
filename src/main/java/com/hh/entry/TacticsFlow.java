@@ -126,4 +126,40 @@ public class TacticsFlow {
     public void setDnBps(long dnBps) {
         this.dnBps = dnBps;
     }
+
+    public long getUpMaxBps() {
+        return upMaxBps;
+    }
+
+    public void setUpMaxBps(long upMaxBps) {
+        this.upMaxBps = upMaxBps;
+    }
+
+    public long getDnMaxBps() {
+        return dnMaxBps;
+    }
+
+    public void setDnMaxBps(long dnMaxBps) {
+        this.dnMaxBps = dnMaxBps;
+    }
+
+    @Override
+    public String toString() {
+        return "TacticsFlow{" +
+                "policyId=" + policyId +
+                ", time=" + time +
+                ", timeGranu=" + timeGranu +
+                ", upBps=" + upBps +
+                ", dnBps=" + dnBps +
+                ", totalBps=" + totalBps +
+                ", upDisByte=" + upDisByte +
+                ", upDisBps=" + upDisBps +
+                ", dnDisByte=" + dnDisByte +
+                ", dnDisBps=" + dnDisBps +
+                ", totalDisByte=" + totalDisByte +
+                ", totalDisBps=" + totalDisBps +
+                ", upMaxBps=" + upMaxBps +
+                ", dnMaxBps=" + dnMaxBps +
+                '}';
+    }
 }

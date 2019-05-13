@@ -10,7 +10,9 @@
  */
 package com.hh.db;
 
+import com.hh.entry.TacticsFlow;
 import com.hh.entry.TacticsTCP;
+import com.hh.jdbc.JdbcUtil;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 
@@ -24,8 +26,9 @@ import java.util.List;
  * @since 1.0.0
  */
 public class TacticsDB extends JdbcTemplate {
-    public TacticsDB(DataSource dataSource) {
-        super(dataSource);
+
+    public TacticsDB(){
+        setDataSource(JdbcUtil.getDataSource());
     }
 
     public List<TacticsTCP> getLinkMsg() {
@@ -44,5 +47,21 @@ public class TacticsDB extends JdbcTemplate {
         String sql = "select tablename from tables_views where tablename = ?";
         List<String> tables = queryForList(sql, String.class, tableName);
         return !tables.isEmpty();
+    }
+
+    public void createTable(String tableName){
+        String sql ="select f_ctb_service('"+tableName+"')";
+        execute(sql);
+    }
+
+    public void addSatics(String table, List<TacticsFlow> tacticsFlows) {
+        String sql = "insert into " + table + "(time, probeid, upbps, dnbps, upmaxbps, dnmaxbps) " +
+                "values (?, ?, ?, ?, ?, ?)";
+        List<Object[]> objects = new ArrayList<>();
+        for (TacticsFlow flow : tacticsFlows) {
+            Object[] obj = new Object[]{flow.getTime(), flow.getPolicyId(), flow.getUpBps(), flow.getDnBps(), flow.getUpMaxBps(), flow.getDnMaxBps()};
+            objects.add(obj);
+        }
+        batchUpdate(sql, objects);
     }
 }

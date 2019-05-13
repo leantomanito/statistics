@@ -1,5 +1,7 @@
 package com.hh;
 
+import com.hh.db.TacticsDB;
+import com.hh.jdbc.JdbcUtil;
 import com.hh.thread.TcpServerRunnable;
 
 import java.util.concurrent.ExecutorService;
@@ -19,6 +21,8 @@ public class TcpClient {
         for (int port = 8000; port < 8011; port++) {
             cachedThreadPool.execute(new TcpServerRunnable(port));
         }
+
+        TacticsDB tacticsDB = new TacticsDB();
     }
 
 }
