@@ -45,8 +45,6 @@ public class EchoHandler extends SimpleChannelInboundHandler<Object> {
     //客户端与服务端创建连接的时候调用
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        log.info(ctx.channel().id().asLongText());
-
         log.info("IP：" + tacticsTCP.getIp() + ":" + tacticsTCP.getPort() + "-->链接成功");
         StringBuilder sb = new StringBuilder();
         sb.append("hello reader comm" + tacticsTCP.getCommver() + "\r\n");
@@ -112,19 +110,18 @@ public class EchoHandler extends SimpleChannelInboundHandler<Object> {
             sb.append("End getReaderInfo items=1\r\n");
             channel.writeAndFlush(Unpooled.copiedBuffer(sb.toString(), CharsetUtil.UTF_8));
         }
-        synchronized(EchoHandler.class){
-            if (msg.toString().indexOf(",") != -1) {
-                long minute = DateUtil.getReorganizeMinute();
-                if(!SysCache.flowDataMap.containsKey(minute)){
-                    SysCache.flowDataMap.put(minute, new ArrayList<TacticsFlow>());
-                }
-                TacticsFlow tacticsFlow = dataHandle(msg.toString());
-                tacticsFlow.setTime(minute);
-                List<TacticsFlow> tacticsFlows = SysCache.flowDataMap.get(minute);
-                tacticsFlows.add(tacticsFlow);
+        if (msg.toString().indexOf(",") != -1) {
+            long minute = DateUtil.getReorganizeMinute();
+            if (!SysCache.flowDataMap.containsKey(minute)) {
+                SysCache.flowDataMap.put(minute, new ArrayList<TacticsFlow>());
             }
+            TacticsFlow tacticsFlow = dataHandle(msg.toString());
+            tacticsFlow.setTime(minute);
+            List<TacticsFlow> tacticsFlows = SysCache.flowDataMap.get(minute);
+            tacticsFlows.add(tacticsFlow);
+            ctx.close();
         }
-        if(msg.toString().indexOf("End") != -1){
+        if (msg.toString().indexOf("End") != -1) {
             ctx.close();
             log.info("tcp链接中断");
         }
@@ -137,16 +134,16 @@ public class EchoHandler extends SimpleChannelInboundHandler<Object> {
         String[] date = msg.split(",");
         TacticsFlow tacticsFlow = new TacticsFlow();
         tacticsFlow.setPolicyId(Integer.valueOf(date[0]));
-        tacticsFlow.setUpBps(arrange32Data(Integer.valueOf(date[1]),Integer.valueOf(date[2])));
-        tacticsFlow.setDnBps(arrange32Data(Integer.valueOf(date[3]),Integer.valueOf(date[4])));
+        tacticsFlow.setUpBps(arrange32Data(Integer.valueOf(date[1]), Integer.valueOf(date[2])));
+        tacticsFlow.setDnBps(arrange32Data(Integer.valueOf(date[3]), Integer.valueOf(date[4])));
         return tacticsFlow;
     }
 
-    public Long arrange32Data(Integer hig,Integer low){
-        if(hig!=null && low!=null){
-            return (long) (hig* (1L<<32) +low)*8/60;
+    public Long arrange32Data(Integer hig, Integer low) {
+        if (hig != null && low != null) {
+            return (long) (hig * (1L << 32) + low) * 8 / 60;
         }
-        return (long)0;
+        return (long) 0;
     }
 
 }

@@ -26,6 +26,13 @@ public class HelloHandler extends ChannelInboundHandlerAdapter {
         System.out.println("ServerHandler receive msg:"+msg.toString());
 
         //写消息：先得到channel，在写如通道然后flush刷新通道把消息发出去。
-        ctx.channel().writeAndFlush("this is ServerHandler reply msg happend at !"+System.currentTimeMillis()+"\r\n");
+//        ctx.channel().writeAndFlush("this is ServerHandler reply msg happend at !"+System.currentTimeMillis()+"\r\n");
+        ctx.channel().writeAndFlush("50820,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0\r\n");
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        cause.printStackTrace();
+        super.exceptionCaught(ctx, cause);
     }
 }

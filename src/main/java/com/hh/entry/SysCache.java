@@ -13,6 +13,7 @@ package com.hh.entry;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author zyj
@@ -24,5 +25,5 @@ public class SysCache {
     //Tcp链接对象
    public static Map<String, TacticsChannel> channelMap = new HashMap<>();
     //Tcp链接对象
-    public static Map<Long, List<TacticsFlow>> flowDataMap = new HashMap<>();
+    public static Map<Long, List<TacticsFlow>> flowDataMap = new ConcurrentHashMap<>();
 }

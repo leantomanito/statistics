@@ -13,8 +13,6 @@ package com.hh.Task;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
 
-import java.util.Date;
-
 /**
  * @author zyj
  * @version 1.0.0

@@ -26,7 +26,7 @@ public class TcpRunnable implements Runnable {
     }
 
     @Override
-    public void run() {
+    public synchronized void run() {
         new TcpClient(tacticsTCP).init();
     }
 }

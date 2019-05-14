@@ -53,7 +53,7 @@ public class TcpClient {
         this.tacticsTCP = tacticsTCP;
     }
     
-    public void init(){
+    public synchronized void init(){
         NioEventLoopGroup group = new NioEventLoopGroup();
         try {
             Bootstrap bootstrap = new Bootstrap();
