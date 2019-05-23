@@ -38,7 +38,7 @@ public class SelfTask {
 
 //		 创建jobDetail实例，绑定Job实现类
 //		 指明job的名称，所在组的名称，以及绑定job类
-            JobDetail tacticsFlowJob = JobBuilder.newJob(TacticsFlowJob.class).withIdentity(JOB_TACTICS_FLOW, JOBGROUP_TACTICS_FLOWS).build();
+            JobDetail tacticsFlowJob = JobBuilder.newJob(GainFlowJob.class).withIdentity(JOB_TACTICS_FLOW, JOBGROUP_TACTICS_FLOWS).build();
             JobDetail integrationFlowJob = JobBuilder.newJob(IntegrationFlowJob.class).withIdentity(JOB_INTEGRATION_FLOW, JOBGROUP_INTEGRATION_FLOWS).build();
 
 
@@ -47,24 +47,21 @@ public class SelfTask {
 //		使用simpleTrigger规则
             Trigger tacticsFlowTrigger = TriggerBuilder.newTrigger().withIdentity(TRIGGER_TACTICS_FLOW, TRIGGER_TACTICS_FLOW)
                     .withSchedule(CronScheduleBuilder.cronSchedule("0 0/1 * * * ?"))
+//                    .withSchedule(CronScheduleBuilder.cronSchedule("0/1 * * * * ?"))
                     .startNow().build();
             Trigger integrationFlowTrigger = TriggerBuilder.newTrigger().withIdentity(TRIGGER_INTEGRATION_FLOW, TRIGGER_INTEGRATION_FLOW)
                     .withSchedule(CronScheduleBuilder.cronSchedule("0 0/5 * * * ?"))
+//                    .withSchedule(CronScheduleBuilder.cronSchedule("0/3 * * * * ?"))
                     .startNow().build();
+
 //		 把作业和触发器注册到任务调度中
             scheduler.scheduleJob(tacticsFlowJob, tacticsFlowTrigger);
             scheduler.scheduleJob(integrationFlowJob, integrationFlowTrigger);
 //		 启动调度
             scheduler.start();
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
-//
-//    public static void main(String[] args) {
-//        new SelfTask().start();
-//    }
 }

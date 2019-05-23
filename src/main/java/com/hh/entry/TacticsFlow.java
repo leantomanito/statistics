@@ -10,26 +10,22 @@
  */
 package com.hh.entry;
 
+
 /**
  * @author zyj
  * @version 1.0.0
  * @since 1.0.0
  */
 public class TacticsFlow {
+
     /**
-     * 探针id
+     * 策略id
      */
     private Integer policyId;
-
     /**
      * 时间
      */
     private long time;
-
-    /**
-     * 时间粒度
-     */
-    private int timeGranu;
 
     /**
      * 上行实际速率
@@ -41,41 +37,15 @@ public class TacticsFlow {
      */
     private long dnBps;
 
-
-    /**
-     * 双向实际速率
-     */
-    private long totalBps;
-
-    /**
-     * 上行丢弃流量
-     */
-    private long upDisByte;
-
     /**
      * 上行丢弃速率
      */
     private long upDisBps;
 
     /**
-     * 下行丢弃流量
-     */
-    private long dnDisByte;
-
-    /**
      * 下行丢弃速率
      */
     private long dnDisBps;
-
-    /**
-     * 双向丢弃流量
-     */
-    private long totalDisByte;
-
-    /**
-     * 双向丢弃速率
-     */
-    private long totalDisBps;
 
     /**
      * 上行峰值速率
@@ -87,13 +57,26 @@ public class TacticsFlow {
      */
     private long dnMaxBps;
 
-    public Integer getPolicyId() {
-        return policyId;
-    }
+    /**
+     * 上行最小速率
+     */
+    private long upMinBps;
 
-    public void setPolicyId(Integer policyId) {
-        this.policyId = policyId;
-    }
+    /**
+     * 下行最小速率
+     */
+    private long dnMinBps;
+
+    /**
+     * 上行直通流量
+     */
+    private long upWhiteBps;
+
+    /**
+     * 下行直通流量
+     */
+    private long dnWhiteBps;
+    public TacticsFlow(){}
 
     public long getTime() {
         return time;
@@ -101,14 +84,6 @@ public class TacticsFlow {
 
     public void setTime(long time) {
         this.time = time;
-    }
-
-    public int getTimeGranu() {
-        return timeGranu;
-    }
-
-    public void setTimeGranu(int timeGranu) {
-        this.timeGranu = timeGranu;
     }
 
     public long getUpBps() {
@@ -143,23 +118,60 @@ public class TacticsFlow {
         this.dnMaxBps = dnMaxBps;
     }
 
-    @Override
-    public String toString() {
-        return "TacticsFlow{" +
-                "policyId=" + policyId +
-                ", time=" + time +
-                ", timeGranu=" + timeGranu +
-                ", upBps=" + upBps +
-                ", dnBps=" + dnBps +
-                ", totalBps=" + totalBps +
-                ", upDisByte=" + upDisByte +
-                ", upDisBps=" + upDisBps +
-                ", dnDisByte=" + dnDisByte +
-                ", dnDisBps=" + dnDisBps +
-                ", totalDisByte=" + totalDisByte +
-                ", totalDisBps=" + totalDisBps +
-                ", upMaxBps=" + upMaxBps +
-                ", dnMaxBps=" + dnMaxBps +
-                '}';
+    public Integer getPolicyId() {
+        return policyId;
     }
+
+    public void setPolicyId(Integer policyId) {
+        this.policyId = policyId;
+    }
+
+    public long getUpDisBps() {
+        return upDisBps;
+    }
+
+    public void setUpDisBps(long upDisBps) {
+        this.upDisBps = upDisBps;
+    }
+
+    public long getDnDisBps() {
+        return dnDisBps;
+    }
+
+    public void setDnDisBps(long dnDisBps) {
+        this.dnDisBps = dnDisBps;
+    }
+
+    public long getUpMinBps() {
+        return upMinBps;
+    }
+
+    public void setUpMinBps(long upMinBps) {
+        this.upMinBps = upMinBps;
+    }
+
+    public long getDnMinBps() {
+        return dnMinBps;
+    }
+
+    public void setDnMinBps(long dnMinBps) {
+        this.dnMinBps = dnMinBps;
+    }
+
+    public long getUpWhiteBps() {
+        return upWhiteBps;
+    }
+
+    public void setUpWhiteBps(long upWhiteBps) {
+        this.upWhiteBps = upWhiteBps;
+    }
+
+    public long getDnWhiteBps() {
+        return dnWhiteBps;
+    }
+
+    public void setDnWhiteBps(long dnWhiteBps) {
+        this.dnWhiteBps = dnWhiteBps;
+    }
+
 }

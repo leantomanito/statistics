@@ -10,15 +10,17 @@
  */
 package com.hh.db;
 
+import com.hh.entry.Board;
+import com.hh.entry.EntryFlow;
 import com.hh.entry.TacticsFlow;
-import com.hh.entry.TacticsTCP;
 import com.hh.jdbc.JdbcUtil;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 
-import javax.sql.DataSource;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author zyj
@@ -27,20 +29,24 @@ import java.util.List;
  */
 public class TacticsDB extends JdbcTemplate {
 
-    public TacticsDB(){
+    public TacticsDB() {
         setDataSource(JdbcUtil.getDataSource());
     }
 
-    public List<TacticsTCP> getLinkMsg() {
-        String sql = "SELECT b.ipaddr,b.tcpport,p.commver FROM tm_board as b left join tm_probe_info as p on b.probeid = p.probeid";
-        List<TacticsTCP> tacticsTCPS = new ArrayList<>();
+    public Map<Integer, Board> getLinkMsg() {
+        String sql = "SELECT b.id,b.probeid,b.domainid,b.ipaddr,b.tcpport,bi.commver FROM tm_board as b left join tm_board_info as bi on b.id = bi.boardid";
+        Map<Integer, Board> boardMap = new HashMap<>();
         SqlRowSet sqlRowSet = queryForRowSet(sql);
         while (sqlRowSet.next()) {
-            tacticsTCPS.add(new TacticsTCP(sqlRowSet.getString("ipaddr"),
+            boardMap.put(sqlRowSet.getInt("id"),new Board(sqlRowSet.getInt("id"),
+                    sqlRowSet.getInt("probeid"),
+                    sqlRowSet.getInt("domainid"),
+                    -1,
+                    sqlRowSet.getString("ipaddr"),
                     sqlRowSet.getInt("tcpport"),
                     sqlRowSet.getString("commver")));
         }
-        return tacticsTCPS;
+        return boardMap;
     }
 
     public boolean isExistTable(String tableName) {
@@ -49,18 +55,28 @@ public class TacticsDB extends JdbcTemplate {
         return !tables.isEmpty();
     }
 
-    public void createTable(String tableName){
-        String sql ="select f_ctb_service('"+tableName+"')";
+    public void createTable(String tableName) {
+        String sql = "select f_ctb_ctrl_mtuple('" + tableName + "')";
         execute(sql);
     }
 
-    public void addSatics(String table, List<TacticsFlow> tacticsFlows) {
-        String sql = "insert into " + table + "(time, probeid, upbps, dnbps, upmaxbps, dnmaxbps) " +
-                "values (?, ?, ?, ?, ?, ?)";
+    public void addSatics(String table, List<EntryFlow> entryFlows) {
+        String sql = "insert into " + table + "(time, probeid, boardid,  linkid, domainid, policyid, upbps, dnbps, upmaxbps, dnmaxbps," +
+                " updisbps, dndisbps, upminbps, dnminbps, upwhitebps, dnwhitebps) " +
+                "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         List<Object[]> objects = new ArrayList<>();
-        for (TacticsFlow flow : tacticsFlows) {
-            Object[] obj = new Object[]{flow.getTime(), flow.getPolicyId(), flow.getUpBps(), flow.getDnBps(), flow.getUpMaxBps(), flow.getDnMaxBps()};
-            objects.add(obj);
+        for (EntryFlow flow : entryFlows) {
+            Map<Integer, TacticsFlow> tacticsFlowMap = flow.getTacticsFlowMap();
+            Board board = flow.getBoard();
+            for (Integer key : tacticsFlowMap.keySet()){
+                TacticsFlow tacticsFlow = tacticsFlowMap.get(key);
+                Object[] obj = new Object[]{tacticsFlow.getTime(), board.getProbeId(), board.getId(), board.getLinkId(), board.getDomainId(), tacticsFlow.getPolicyId(),
+                        tacticsFlow.getUpBps(), tacticsFlow.getDnBps(), tacticsFlow.getUpMaxBps(),
+                        tacticsFlow.getDnMaxBps(), tacticsFlow.getUpDisBps(), tacticsFlow.getDnDisBps(),
+                        tacticsFlow.getUpMinBps(), tacticsFlow.getDnMinBps(),tacticsFlow.getUpWhiteBps(),
+                        tacticsFlow.getDnWhiteBps()};
+                objects.add(obj);
+            }
         }
         batchUpdate(sql, objects);
     }
